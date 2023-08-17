@@ -1,0 +1,49 @@
+#!/usr/bin/env ansible-playbook
+---
+#
+#      Copyright (c) 2023 BlueAlly NetCraftsmen, LLC
+#      All rights reserved.
+#
+#      author: Joel W. King, @joelwking
+#
+#      description: Functional tests of pangea intel module
+#
+#      usage:  
+#
+#        ./pb.intel_test.yml
+# 
+
+- name: Functional tests of the Pangea collection
+  connection: local
+  hosts: localhost
+  gather_facts: false
+
+  vars: 
+    token: "{{ lookup('ansible.builtin.env', 'PANGEA_TOKEN') }}"
+    domain: "{{ lookup('ansible.builtin.env', 'PANGEA_DOMAIN') }}"
+
+  tasks:
+    - name: User Intel
+      netcraftsmen.pangea.intel:
+        token: '{{ token }}'
+        domain: '{{ domain }}'
+        action: user
+        user_intel:
+          email: "programmable.networks@gmail.com"
+      register: pangea
+    
+    - name: View output
+      ansible.builtin.debug:
+        msg:
+          - 'request id {{ pangea.data.request_id }}'
+          - 'breach_count {{ pangea.data.result.data.breach_count }}'
+          - 'summary / status  {{ pangea.data.summary }} {{ pangea.data.status }}'
+
+    - name: User Intel
+      netcraftsmen.pangea.intel:
+        token: '{{ token }}'
+        domain: '{{ domain }}'
+        action: user
+        user_intel:
+          ip: '192.0.2.1'
+      register: pangea

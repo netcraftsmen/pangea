@@ -1,0 +1,7 @@
+.DS_Store
+playbooks/.DS_Store
+#
+.env/*
+!.env/README.md
+#
+collections/ansible_collections/netcraftsmen/pangea/plugins/module_utils/__pycache__/

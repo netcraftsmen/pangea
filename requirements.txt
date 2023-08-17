@@ -1,0 +1,18 @@
+#
+# -----------------------------------------------------------
+# Core development packages
+#
+pyyaml
+ansible
+requests
+flake8
+# -----------------------------------------------------------
+#
+# For Ansible and YAML file linting (used in CI/CD demo)
+#
+yamllint
+ansible-lint
+#
+# Pangea
+#
+pangea-sdk
