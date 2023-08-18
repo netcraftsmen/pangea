@@ -23,12 +23,12 @@
     domain: "{{ lookup('ansible.builtin.env', 'PANGEA_DOMAIN') }}"
 
   tasks:
-    - name: User Intel
+    - name: User Intel email
       netcraftsmen.pangea.intel:
         token: '{{ token }}'
-        domain: '{{ domain }}'
+        domain: aws.us.pangea.cloud
         action: user
-        user_intel:
+        parameters:
           email: "programmable.networks@gmail.com"
       register: pangea
     
@@ -39,11 +39,16 @@
           - 'breach_count {{ pangea.data.result.data.breach_count }}'
           - 'summary / status  {{ pangea.data.summary }} {{ pangea.data.status }}'
 
-    - name: User Intel
+    - name: User Intel IP
       netcraftsmen.pangea.intel:
         token: '{{ token }}'
         domain: '{{ domain }}'
         action: user
-        user_intel:
+        parameters:
           ip: '192.0.2.1'
+          raw: true
+          verbose: true
+          start: "2022-05-15"
+          end: "2023-01-15"
       register: pangea
+      tags: ['ip']

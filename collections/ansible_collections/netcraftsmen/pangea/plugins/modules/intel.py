@@ -47,9 +47,8 @@ options:
         choices: ['user', 'ip', 'url', 'domain']
         type: str
     user_intel:
-        description: 
-          - arguments to provide for looking up breached users
-          - only provide one of the choices
+        description:
+          - Specify one of the following rguments for looking up breached users
         required: true
         choices: ['email', 'ip', 'username', 'phone_number']
         type: dict
@@ -60,22 +59,28 @@ author:
 
 EXAMPLES = r'''
 
-- name: User Intel email
-    netcraftsmen.pangea.intel:
-    token: '{{ token }}'
-    domain: aws.us.pangea.cloud
-    action: user
-    email: "programmable.networks@gmail.com"
-    register: pangea
+    - name: User Intel email
+      netcraftsmen.pangea.intel:
+        token: '{{ token }}'
+        domain: aws.us.pangea.cloud
+        action: user
+        parameters:
+          email: "programmable.networks@gmail.com"
+      register: pangea
 
-- name: User Intel IP address
-    netcraftsmen.pangea.intel:
-    token: '{{ token }}'
-    domain: '{{ domain }}'
-    action: user
-    user_intel:
-        ip: '192.0.2.1'
-    register: pangea
+    - name: User Intel IP
+      netcraftsmen.pangea.intel:
+        token: '{{ token }}'
+        domain: '{{ domain }}'
+        action: user
+        parameters:
+          ip: '192.0.2.1'
+          raw: true
+          verbose: true
+          start: "2022-05-15"
+          end: "2023-01-15"
+      register: pangea
+
 '''
 
 RETURN = r'''
@@ -117,20 +122,16 @@ except ImportError:
     HAS_PGA = False
 
 def user_intel(params, intel):
-    """_summary_
+    """ The User Intel service allows you to check a large repository of breach data to see if a user's 
+        Personally Identifiable Data (PII) or credentials have been compromised.
     """
-    user_intel = params.get('user_intel')
-    # email = user_intel.get('email')   
-    provider = params.get('provider')
-    # verbose = params.get('verbose')
-    # raw= params.get('raw')
+    parameters = params.get('parameters')
 
     try:
-        response = intel.user_breached(**user_intel, provider=provider, verbose=params.get('verbose'), raw=params.get('raw'))
+        response = intel.user_breached(**parameters)
     except pe.PangeaAPIException as e:
-        return dict(fail=True, msg=f"Request Error: {e.response.summary} {e.errors}")
-            # for err in e.errors:
-            # print(f"\t{err.detail} \n")
+        return dict(fail=True, msg=f"User Intel Error: {e.response.summary} {e.errors}")
+    
     return dict(data=response.json)
 
 def main():
@@ -140,17 +141,17 @@ def main():
         argument_spec=dict(
             token=dict(type='str', required=False, nolog=True, default=os.getenv("PANGEA_INTEL_TOKEN")),
             domain=dict(type='str', required=False, default=os.getenv("PANGEA_DOMAIN")),
-            verbose=dict(type='bool', required=False, default=False),
-            raw=dict(type='bool', required=False, default=False),
-            user_intel=dict(type='dict',options=dict(
+            parameters=dict(type='dict', options=dict(
                 email=dict(type='str', required=False, default=None),
                 username=dict(type='str', required=False, default=None),
                 phone_number=dict(type='str', required=False, default=None),
-                ip=dict(type='str', required=False, default=None))),
-            provider=dict(type='str', required=False, default="spycloud"),
-            start=dict(type='str', required=False),
-            end=dict(type='str', required=False),
-            
+                ip=dict(type='str', required=False, default=None),
+                provider=dict(type='str', required=False, default="spycloud"),
+                start=dict(type='str', required=False),
+                end=dict(type='str', required=False),
+                verbose=dict(type='bool', required=False, default=False),
+                raw=dict(type='bool', required=False, default=False),  
+                )),
             action=dict(type='str', required=True, choices=['user', 'ip', 'url', 'domain'])
             ),
         supports_check_mode=False
