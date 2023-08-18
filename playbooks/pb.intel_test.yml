@@ -27,6 +27,7 @@
       netcraftsmen.pangea.intel:
         token: '{{ token }}'
         domain: aws.us.pangea.cloud
+        logger: true
         action: user
         parameters:
           email: "programmable.networks@gmail.com"
@@ -50,5 +51,17 @@
           verbose: true
           start: "2022-05-15"
           end: "2023-01-15"
+          provider: crowdstrike
       register: pangea
       tags: ['ip']
+
+    - name: Domain reputation
+      netcraftsmen.pangea.intel:
+        token: '{{ token }}'
+        domain: '{{ domain }}'
+        action: domain
+        parameters:
+          domain: "737updatesboeing.com"
+          provider: domaintools
+      register: pangea
+      tags: ['domain']

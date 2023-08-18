@@ -114,6 +114,7 @@ try:
     import pangea.exceptions as pe
     from pangea.config import PangeaConfig
     from pangea.services import UserIntel
+    from pangea.services import DomainIntel
     from pangea.services.intel import HashType
     from pangea.tools import logger_set_pangea_config
     from pangea.utils import get_prefix, hash_sha256
@@ -121,17 +122,49 @@ try:
 except ImportError:
     HAS_PGA = False
 
-def user_intel(params, intel):
+def user_intel(params):
     """ The User Intel service allows you to check a large repository of breach data to see if a user's 
         Personally Identifiable Data (PII) or credentials have been compromised.
+    Args:
+        params (dict): module parameters
     """
-    parameters = params.get('parameters')
+
+    config = PangeaConfig(domain=params.get("domain"))
+    intel = UserIntel(params.get("token"), config=config, logger_name="intel")
+    if params.get('logger'):
+        logger_set_pangea_config(logger_name=intel.logger.name)
 
     try:
-        response = intel.user_breached(**parameters)
+        response = intel.user_breached(**params.get('parameters'))
     except pe.PangeaAPIException as e:
         return dict(fail=True, msg=f"User Intel Error: {e.response.summary} {e.errors}")
+
+    return dict(data=response.json)
+
+def domain_intel(params):
+    """ Retrieve reputation for a domain from a provider, including an optional detailed report.
+
+    Args:
+        params (_type_): module parameters
+    """
     
+    params['parameters'].pop('email')
+    params['parameters'].pop('ip')
+    params['parameters'].pop('username')
+    params['parameters'].pop('phone_number')
+    params['parameters'].pop('start')
+    params['parameters'].pop('end')
+
+    config = PangeaConfig(domain=params.get("domain"))
+    intel = DomainIntel(params.get("token"), config=config, logger_name="intel")
+    if params.get('logger'):
+        logger_set_pangea_config(logger_name=intel.logger.name)
+
+    try:
+        response = intel.reputation(**params.get('parameters'))
+    except pe.PangeaAPIException as e:
+        return dict(fail=True, msg=f"Domain Intel Error: {e.response.summary} {e.errors}")
+
     return dict(data=response.json)
 
 def main():
@@ -139,13 +172,15 @@ def main():
     """
     module = AnsibleModule(
         argument_spec=dict(
-            token=dict(type='str', required=False, nolog=True, default=os.getenv("PANGEA_INTEL_TOKEN")),
+            token=dict(type='str', required=False, no_log=True, default=os.getenv("PANGEA_INTEL_TOKEN")),
             domain=dict(type='str', required=False, default=os.getenv("PANGEA_DOMAIN")),
+            logger=dict(type='bool', required=False, default=False),
             parameters=dict(type='dict', options=dict(
                 email=dict(type='str', required=False, default=None),
                 username=dict(type='str', required=False, default=None),
                 phone_number=dict(type='str', required=False, default=None),
                 ip=dict(type='str', required=False, default=None),
+                domain=dict(type='str', required=False, default=None),
                 provider=dict(type='str', required=False, default="spycloud"),
                 start=dict(type='str', required=False),
                 end=dict(type='str', required=False),
@@ -157,24 +192,20 @@ def main():
         supports_check_mode=False
     )
 
-    # raise Exception(module.params)
     if not HAS_PGA:
         module.fail_json(msg="The Python SDK, pangea-sdk, is required!")
 
     # Create a case structure to call the appropriate action
-    supported_actions = dict(user=user_intel)
+    supported_actions = dict(user=user_intel,
                              # ip=ip_intel,
                              # url=url_intel,
-                             # domain=domain_intel)
+                             domain=domain_intel)
+
 
     # Get the function name associated with the action called by the user
     run_action = supported_actions.get(module.params.get('action'))
 
-    # Run the function associated with the action, pass the module parameters and object
-    config = PangeaConfig(domain=module.params.get("domain"))
-    intel = UserIntel(module.params.get("token"), config=config, logger_name="intel")
-    logger_set_pangea_config(logger_name=intel.logger.name)
-    action_result = run_action(module.params, intel)
+    action_result = run_action(module.params)
 
     if action_result.get('fail'):
         module.fail_json(msg=f"{action_result.get('msg')}")
