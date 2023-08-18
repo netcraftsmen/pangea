@@ -31,28 +31,39 @@ options:
         required: true
         type: str
         default: PANGEA_DOMAIN environment variable
-    verbose:
-        description: Echo the API parameters in the response
+    logger:
+        description: enable interal logging, creates a file in current directory
         required: false
+        type: str
         default: false
-        type: bool
-    raw:
-        description: Include raw data from this provider
-        required: false
-        default: false
-        type: bool
     action:
         description: Specifies the action to perform
         required: true
         choices: ['user', 'ip', 'url', 'domain']
         type: str
-    user_intel:
+    parameters:
         description:
-          - Specify one of the following rguments for looking up breached users
+          - Specify parameters associated with an action.
         required: true
-        choices: ['email', 'ip', 'username', 'phone_number']
         type: dict
-
+        options:
+            raw:
+              description: Include raw data from this provider
+              required: false
+              default: false
+              type: bool
+            verbose:
+              description: Echo the API parameters in the response
+              required: false
+              default: false
+              type: bool
+            provider:
+              description: Use reputation data from this provider, e.g. "crowdstrike"
+              required: false
+              default: spycloud
+              type: str
+            TODO:
+              description: TODO TODO complete this section
 author:
     - Joel W. King (@joelwking)
 '''
@@ -81,6 +92,24 @@ EXAMPLES = r'''
           end: "2023-01-15"
       register: pangea
 
+    - name: Domain reputation
+      netcraftsmen.pangea.intel:
+        token: '{{ token }}'
+        domain: '{{ domain }}'
+        action: domain
+        parameters:
+          domain: "737updatesboeing.com"
+          provider: domaintools
+
+    - name: URL reputation
+      netcraftsmen.pangea.intel:
+        token: '{{ token }}'
+        domain: '{{ domain }}'
+        action: url
+        parameters:
+          url: http://113.235.101.11:54384
+          provider: crowdstrike
+
 '''
 
 RETURN = r'''
@@ -97,30 +126,50 @@ msg:
     description: an error message or other information returned as to the status
     type: str
     returned: optional
-    sample: "Status Code: ...."
+    sample: "Url Intel Error: Not authorized to access this resource []"
 data:
     description: data returned from the API call of the requested action
     type: dict
     returned: success
-    sample: 'sample returned output'
+
 '''
 
 
 from ansible.module_utils.basic import AnsibleModule
 
 import os
+import copy
 
 try:
     import pangea.exceptions as pe
     from pangea.config import PangeaConfig
     from pangea.services import UserIntel
     from pangea.services import DomainIntel
+    from pangea.services import UrlIntel
     from pangea.services.intel import HashType
     from pangea.tools import logger_set_pangea_config
     from pangea.utils import get_prefix, hash_sha256
     HAS_PGA = True
 except ImportError:
     HAS_PGA = False
+
+
+def strip_invalid(parameters, valid):
+    """ Strips out invalid params, returns valid params
+
+    Args:
+        parameters (dict): parameters from argument spec
+        valid (tuple): valid parameters
+    """
+    vparms = copy.deepcopy(parameters)
+    for key in parameters.keys():
+        if key in valid:
+            if vparms[key] is None:
+                vparms.pop(key)
+        else:
+            vparms.pop(key)
+    return vparms
+
 
 def user_intel(params):
     """ The User Intel service allows you to check a large repository of breach data to see if a user's 
@@ -134,8 +183,12 @@ def user_intel(params):
     if params.get('logger'):
         logger_set_pangea_config(logger_name=intel.logger.name)
 
+    valid = ('start', 'end', 'verbose', 'raw', 'provider',
+             'email', 'phone_number', 'username', 'ip')
+    params = strip_invalid(params.get('parameters'), valid)
+
     try:
-        response = intel.user_breached(**params.get('parameters'))
+        response = intel.user_breached(**params)
     except pe.PangeaAPIException as e:
         return dict(fail=True, msg=f"User Intel Error: {e.response.summary} {e.errors}")
 
@@ -145,25 +198,44 @@ def domain_intel(params):
     """ Retrieve reputation for a domain from a provider, including an optional detailed report.
 
     Args:
-        params (_type_): module parameters
+        params (dict): module parameters
     """
-    
-    params['parameters'].pop('email')
-    params['parameters'].pop('ip')
-    params['parameters'].pop('username')
-    params['parameters'].pop('phone_number')
-    params['parameters'].pop('start')
-    params['parameters'].pop('end')
 
     config = PangeaConfig(domain=params.get("domain"))
     intel = DomainIntel(params.get("token"), config=config, logger_name="intel")
     if params.get('logger'):
         logger_set_pangea_config(logger_name=intel.logger.name)
 
+    valid = ('domain', 'provider', 'verbose', 'raw')
+    params = strip_invalid(params.get('parameters'), valid)
+
     try:
-        response = intel.reputation(**params.get('parameters'))
+        response = intel.reputation(**params)
     except pe.PangeaAPIException as e:
         return dict(fail=True, msg=f"Domain Intel Error: {e.response.summary} {e.errors}")
+
+    return dict(data=response.json)
+
+def url_intel(params):
+    """ The URL Intel service allows you to retrieve intelligence about known URLs, 
+        giving you insight into the reputation of a URL.
+
+    Args:
+        params (dict): module parameters
+    """
+    
+    config = PangeaConfig(domain=params.get("domain"))
+    intel = UrlIntel(params.get("token"), config=config, logger_name="intel")
+    if params.get('logger'):
+        logger_set_pangea_config(logger_name=intel.logger.name)
+
+    valid = ('url', 'provider', 'verbose', 'raw')
+    params = strip_invalid(params.get('parameters'), valid)
+
+    try:
+        response = intel.reputation(**params)
+    except pe.PangeaAPIException as e:
+        return dict(fail=True, msg=f"Url Intel Error: {e.response.summary} {e.errors}")
 
     return dict(data=response.json)
 
@@ -180,6 +252,7 @@ def main():
                 username=dict(type='str', required=False, default=None),
                 phone_number=dict(type='str', required=False, default=None),
                 ip=dict(type='str', required=False, default=None),
+                url=dict(type='str', required=False, default=None),
                 domain=dict(type='str', required=False, default=None),
                 provider=dict(type='str', required=False, default="spycloud"),
                 start=dict(type='str', required=False),
@@ -198,7 +271,7 @@ def main():
     # Create a case structure to call the appropriate action
     supported_actions = dict(user=user_intel,
                              # ip=ip_intel,
-                             # url=url_intel,
+                             url=url_intel,
                              domain=domain_intel)
 
 

@@ -32,6 +32,7 @@
         parameters:
           email: "programmable.networks@gmail.com"
       register: pangea
+      tags: ['email']
     
     - name: View output
       ansible.builtin.debug:
@@ -46,12 +47,13 @@
         domain: '{{ domain }}'
         action: user
         parameters:
-          ip: '192.0.2.1'
+          ip: 192.0.2.1
           raw: true
           verbose: true
           start: "2022-05-15"
           end: "2023-01-15"
-          provider: crowdstrike
+          provider: spycloud
+          domain: "737updatesboeing.com"  # Will be ignored, not valid
       register: pangea
       tags: ['ip']
 
@@ -63,5 +65,18 @@
         parameters:
           domain: "737updatesboeing.com"
           provider: domaintools
+          raw: false
+          verbose: true
       register: pangea
       tags: ['domain']
+
+    - name: URL reputation
+      netcraftsmen.pangea.intel:
+        token: '{{ token }}'
+        domain: '{{ domain }}'
+        action: url
+        parameters:
+          url: http://113.235.101.11:54384
+          provider: crowdstrike
+      register: pangea
+      tags: ['url']
