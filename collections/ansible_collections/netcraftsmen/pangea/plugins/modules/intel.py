@@ -43,27 +43,26 @@ options:
         type: str
     parameters:
         description:
-          - Specify parameters associated with an action.
+          - Specify one or more parameters associated with an action.
         required: true
         type: dict
-        options:
-            raw:
-              description: Include raw data from this provider
-              required: false
-              default: false
-              type: bool
-            verbose:
-              description: Echo the API parameters in the response
-              required: false
-              default: false
-              type: bool
-            provider:
-              description: Use reputation data from this provider, e.g. "crowdstrike"
-              required: false
-              default: spycloud
-              type: str
-            TODO:
-              description: TODO TODO complete this section
+        choices:
+          - raw
+          - verbose
+          - provider
+          - email
+          - phone_number
+          - username
+          - ip
+          - url
+          - domain
+          - start
+          - end
+
+notes:
+  - The phone number has a minLength 7, maxLength 15.
+  - start and end are dates is the form of "2022-05-15"
+
 author:
     - Joel W. King (@joelwking)
 '''
