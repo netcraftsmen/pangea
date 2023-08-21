@@ -6,6 +6,7 @@ Store your credentials in a file `login.sh` in this directory.
 
 ```shell
 export PANGEA_TOKEN=token
+export PANGEA_AUDIT_TOKEN=$PANGEA_TOKEN
 export PANGEA_DOMAIN=aws.us.pangea.cloud
 ```
 

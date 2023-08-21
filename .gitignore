@@ -5,3 +5,7 @@ playbooks/.DS_Store
 !.env/README.md
 #
 collections/ansible_collections/netcraftsmen/pangea/plugins/module_utils/__pycache__/
+#
+# Ignore files unless specifically exempted
+#
+playbooks/files/*

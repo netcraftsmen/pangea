@@ -1,0 +1,79 @@
+#!/usr/bin/env ansible-playbook
+---
+#
+#      Copyright (c) 2023 BlueAlly NetCraftsmen, LLC
+#      All rights reserved.
+#
+#      author: Joel W. King, @joelwking
+#
+#      description: Breached user check, verify if the username, email or phone number has
+#                   been exposed in a security breach. 
+#
+#      usage:  
+#
+#        ./pb.breach_user_check.yml -e 'email=bob@example.com' -e 'hone_number=9197079300 -e 'username=bob'
+# 
+
+- name: Breached User Check
+  connection: local
+  hosts: localhost
+  gather_facts: false
+
+  vars: 
+    token: "{{ lookup('ansible.builtin.env', 'PANGEA_TOKEN') }}"
+    domain: "{{ lookup('ansible.builtin.env', 'PANGEA_DOMAIN') }}"
+
+    pangea_anchor: &pangea_opts
+      domain: '{{ domain }}'
+      token: '{{ token }}'
+
+    email: "programmable.networks@gmail.com"
+    phone_number: 919-707-9300
+    username: whitehead
+
+  tasks:
+    - name: User Intel email
+      netcraftsmen.pangea.intel:
+        <<: *pangea_opts
+        action: user
+        parameters:
+          email: '{{ email }}'
+          raw: true
+      register: pangea_email
+      tags: ['email']
+    
+    - name: User Intel username
+      netcraftsmen.pangea.intel:
+        <<: *pangea_opts
+        action: user
+        parameters:
+          username: '{{ username }}'
+          raw: true
+      register: pangea_username
+      tags: ['username']
+
+    - name: User Intel phone number
+      netcraftsmen.pangea.intel:
+        <<: *pangea_opts
+        action: user
+        parameters:
+          phone_number: '{{ phone_number }}'
+          raw: true
+      register: pangea_phone
+      tags: ['phone']      
+
+    - name: View output sample results
+      ansible.builtin.debug:
+        msg:
+          - 'Phone: {{ phone_number }} {{ pangea_phone.data.summary }}'
+          - 'Username: {{ username }} {{ pangea_username.data.summary }}'
+          - 'Email: {{ email }} {{ pangea_email.data.summary }}'
+
+    - name: Output the returned data for additional analysis
+      ansible.builtin.copy:
+        content: '{{ item | to_yaml }}'
+        dest: '{{ playbook_dir }}/files/{{ item.data.request_id }}.yml'
+      loop:
+        - '{{ pangea_phone }}'
+        - '{{ pangea_username }}'
+        - '{{ pangea_email }}'
