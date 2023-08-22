@@ -11,7 +11,7 @@
 #
 #      usage:  
 #
-#        ./pb.breach_user_check.yml -e 'email=bob@example.com' -e 'phone_number=9197079300 -e 'username=bob'
+#        ansible-playbook pb.breach_user_check.yml -e 'email=bob@example.com' -e 'phone_number=9197079300' -e 'username=bob'
 # 
 
 - name: Breached User Check
@@ -27,7 +27,7 @@
       domain: '{{ domain }}'
       token: '{{ token }}'
 
-    email: "programmable.networks@gmail.com"
+    email: "bob@example.net"
     phone_number: 919-707-9300
     username: whitehead
 
@@ -69,11 +69,11 @@
           - 'Username: {{ username }} {{ pangea_username.data.summary }}'
           - 'Email: {{ email }} {{ pangea_email.data.summary }}'
 
-    - name: Output the returned data for additional analysis
+    - name: Write files containing the returned data for additional analysis
       ansible.builtin.copy:
-        content: '{{ item | to_yaml }}'
-        dest: '{{ playbook_dir }}/files/{{ item.data.request_id }}.yml'
+        content: '{{ item.data | to_yaml }}'
+        dest: '{{ playbook_dir }}/files/{{ item.fname }}.yml'
       loop:
-        - '{{ pangea_phone }}'
-        - '{{ pangea_username }}'
-        - '{{ pangea_email }}'
+        - '{ "data": {{ pangea_phone }}, "fname": "phone"}'
+        - '{ "data": {{ pangea_username }}, "fname": "username"}'
+        - '{ "data": {{ pangea_email }}, "fname": "email"}'

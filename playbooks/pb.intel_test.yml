@@ -6,11 +6,11 @@
 #
 #      author: Joel W. King, @joelwking
 #
-#      description: Functional tests of pangea intel module
+#      description: Functional tests of pangea User, Domain and URL intel module
 #
 #      usage:  
 #
-#        ./pb.intel_test.yml
+#        ansible-playbook pb.intel_test.yml -v
 # 
 
 - name: Functional tests of the Pangea collection
@@ -30,7 +30,7 @@
         logger: true
         action: user
         parameters:
-          email: "programmable.networks@gmail.com"
+          email: "bob@example.net"
       register: pangea
       tags: ['email']
     
@@ -53,7 +53,7 @@
           start: "2022-05-15"
           end: "2023-01-15"
           provider: spycloud
-          domain: "737updatesboeing.com"  # Will be ignored, not valid
+          domain: "737updatesboeing.com"  # Will be ignored, not valid under user action
       register: pangea
       tags: ['ip']
 

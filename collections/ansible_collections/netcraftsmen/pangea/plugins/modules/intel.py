@@ -10,12 +10,15 @@ DOCUMENTATION = r'''
 ---
 module: intel
 
-short_description: Intel actions for Pangea
+short_description: User, Domain and URL intel for Pangea Cloud
 
 version_added: "1.0.0"
 
 description:
-  - This module provides functionality to invoke ....
+  - This module provides User Intel functionality to determine if an email address, username, phone number,
+  - or IP address was exposed in a security breach. The Domain Intel service retrieves intelligence about 
+  - known domain names, providing insight into the reputation of a domain. The URL Intel service retrieves
+  - intelligence about the reputation of a URL.
 
 requirements:
   - Python package pangea-sdk
@@ -39,7 +42,7 @@ options:
     action:
         description: Specifies the action to perform
         required: true
-        choices: ['user', 'ip', 'url', 'domain']
+        choices: ['user', 'url', 'domain']
         type: str
     parameters:
         description:
@@ -75,7 +78,7 @@ EXAMPLES = r'''
         domain: aws.us.pangea.cloud
         action: user
         parameters:
-          email: "programmable.networks@gmail.com"
+          email: "bob@example.net"
       register: pangea
 
     - name: User Intel IP
@@ -145,9 +148,9 @@ try:
     from pangea.services import UserIntel
     from pangea.services import DomainIntel
     from pangea.services import UrlIntel
-    from pangea.services.intel import HashType
+    # from pangea.services.intel import HashType
     from pangea.tools import logger_set_pangea_config
-    from pangea.utils import get_prefix, hash_sha256
+    # from pangea.utils import get_prefix, hash_sha256
     HAS_PGA = True
 except ImportError:
     HAS_PGA = False
@@ -193,6 +196,7 @@ def user_intel(params):
 
     return dict(data=response.json)
 
+
 def domain_intel(params):
     """ Retrieve reputation for a domain from a provider, including an optional detailed report.
 
@@ -215,6 +219,7 @@ def domain_intel(params):
 
     return dict(data=response.json)
 
+
 def url_intel(params):
     """ The URL Intel service allows you to retrieve intelligence about known URLs, 
         giving you insight into the reputation of a URL.
@@ -234,9 +239,10 @@ def url_intel(params):
     try:
         response = intel.reputation(**params)
     except pe.PangeaAPIException as e:
-        return dict(fail=True, msg=f"Url Intel Error: {e.response.summary} {e.errors}")
+        return dict(fail=True, msg=f"URL Intel Error: {e.response.summary} {e.errors}")
 
     return dict(data=response.json)
+
 
 def main():
     """ Main logic flow
@@ -269,10 +275,8 @@ def main():
 
     # Create a case structure to call the appropriate action
     supported_actions = dict(user=user_intel,
-                             # ip=ip_intel,
                              url=url_intel,
                              domain=domain_intel)
-
 
     # Get the function name associated with the action called by the user
     run_action = supported_actions.get(module.params.get('action'))

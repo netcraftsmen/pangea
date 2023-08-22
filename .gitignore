@@ -1,6 +1,10 @@
 .DS_Store
 playbooks/.DS_Store
 #
+#  log file created with logger option enabled, ignore
+#
+playbooks/pangea_sdk_logs.json
+#
 .env/*
 !.env/README.md
 #
