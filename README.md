@@ -3,8 +3,7 @@ Pangea has a comprehensive security platform that you can leverage with simple A
 
 ## Pangea Securathon
 
-ABOUT THE CHALLENGE: Health & Wealth Hackathon is a great opportunity to build your security skills using Pangea APIs
-for more details see <https://healthandwealth.devpost.com/>. The deadline is 18 September 2023.
+ABOUT THE CHALLENGE: Health & Wealth Hackathon is a great opportunity to build your security skills using Pangea APIs for more details see <https://healthandwealth.devpost.com/>. The deadline is 18 September 2023.
 
 ## Ansible Collection
 
@@ -14,6 +13,7 @@ The `playbooks` directory contains two sample playbooks. Playbook `pb.intel_test
 
 ### Module Documentation
 
+```
 > NETCRAFTSMEN.PANGEA.INTEL    (/workspaces/pangea/collections/ansible_collections/netcraftsmen/pangea/plugins/modules/intel.py)
 
         This module provides User Intel functionality to determine if
@@ -128,6 +128,7 @@ RETURN VALUES:
         sample: 'Url Intel Error: Not authorized to access this resource []'
         type: str
 
+```
 
 ## Author
 
