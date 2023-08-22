@@ -37,7 +37,7 @@ options:
     logger:
         description: enable interal logging, creates a file in current directory
         required: false
-        type: str
+        type: bool
         default: false
     action:
         description: Specifies the action to perform

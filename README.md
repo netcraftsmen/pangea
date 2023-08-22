@@ -40,7 +40,7 @@ OPTIONS (= is mandatory):
 - logger
         enable interal logging, creates a file in current directory
         default: false
-        type: str
+        type: bool
 
 = parameters
         Specify one or more parameters associated with an action.
