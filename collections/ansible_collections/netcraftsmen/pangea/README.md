@@ -36,7 +36,7 @@ The module documentation contains various execution examples, basic usage is sho
     domain: "{{ lookup('ansible.builtin.env', 'PANGEA_DOMAIN') }}"
 
   collections:
-    - blueally.pangea
+    - netcraftsmen.pangea
 
   tasks:
     - name: User Intel email
