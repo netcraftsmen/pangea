@@ -35,6 +35,7 @@
         action: user
         parameters:
           email: "info@blueally.com"
+          raw: true
       register: pangea
       tags: ['email']
     
