@@ -22,12 +22,16 @@
     token: "{{ lookup('ansible.builtin.env', 'PANGEA_TOKEN') }}"
     domain: "{{ lookup('ansible.builtin.env', 'PANGEA_DOMAIN') }}"
 
+  collections:
+    - blueally.pangea
+    - netcraftsmen.pangea
+
   tasks:
     - name: User Intel email
-      blueally.pangea.intel:
+      intel:
         token: '{{ token }}'
         domain: aws.us.pangea.cloud
-        logger: true
+        logger: false
         action: user
         parameters:
           email: "info@blueally.com"

@@ -9,6 +9,7 @@ playbooks/pangea_sdk_logs.json
 !.env/README.md
 #
 collections/ansible_collections/netcraftsmen/pangea/plugins/module_utils/__pycache__/
+collections/ansible_collections/blueally/pangea/plugins/module_utils/__pycache__/
 #
 # Ignore files unless specifically exempted
 #
