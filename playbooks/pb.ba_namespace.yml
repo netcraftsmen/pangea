@@ -1,0 +1,36 @@
+#!/usr/bin/env ansible-playbook
+---
+#
+#      Copyright (c) 2023 BlueAlly NetCraftsmen, LLC
+#      All rights reserved.
+#
+#      author: Joel W. King, @joelwking
+#
+#      description: Functional tests of pangea User, Domain and URL intel module
+#
+#      usage:  
+#
+#        ansible-playbook pb.ba_namespace.yml -v
+# 
+
+- name: Functional tests of the Pangea collection
+  connection: local
+  hosts: localhost
+  gather_facts: false
+
+  vars: 
+    token: "{{ lookup('ansible.builtin.env', 'PANGEA_TOKEN') }}"
+    domain: "{{ lookup('ansible.builtin.env', 'PANGEA_DOMAIN') }}"
+
+  tasks:
+    - name: User Intel email
+      blueally.pangea.intel:
+        token: '{{ token }}'
+        domain: aws.us.pangea.cloud
+        logger: true
+        action: user
+        parameters:
+          email: "info@blueally.com"
+      register: pangea
+      tags: ['email']
+    

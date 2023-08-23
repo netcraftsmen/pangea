@@ -1,3 +1,3 @@
-# Ansible Collection - netcraftsmen.pangea
+# Ansible Collection - blueally.pangea
 
 Documentation for the collection.
