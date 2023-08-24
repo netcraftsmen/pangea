@@ -2,7 +2,7 @@
 
 ### Environment variables
 
-Store your credentials in a file `login.sh` in this directory.
+Store your credentials in a file `login.sh` in this directory. Tokens can be unique to a service or shared across multiple services. The playbooks are set up to use a shared token, but could be modified easily.
 
 ```shell
 export PANGEA_TOKEN=token

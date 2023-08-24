@@ -1,5 +1,11 @@
 ## Basic Debugging
 
+We encountered issues with the certificate chain present on the development laptop 23 August 2023. The Cisco Umbrella Root CA on my laptop was causing the problem, assumed the Advanced Cisco Umbrella SSL Decryption feature. These notes are from the debugging session
+
+### Code snippit
+
+This is a minimal piece of Python code invoking the SDK/API. Needed is the domain and token, which is set on `console.pangea.cloud`.
+
 Refer to the Python code examples <https://github.com/pangeacyber/pangea-python/tree/main/examples> for examples of the SDK usage.
 
 ```python
