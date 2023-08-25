@@ -16,9 +16,9 @@ version_added: "1.0.0"
 
 description:
   - This module provides User Intel functionality to determine if an email address, username, phone number,
-  - or IP address was exposed in a security breach. The Domain Intel service retrieves intelligence about 
-  - known domain names, providing insight into the reputation of a domain. The URL Intel service retrieves
-  - intelligence about the reputation of a URL.
+  - IP address or hashed password was exposed in a security breach. The Domain Intel service retrieves
+  - intelligence about  known domain names, providing insight into the reputation of a domain.
+  - The URL Intel service retrieves intelligence about the reputation of a URL.
 
 requirements:
   - Python package pangea-sdk
@@ -42,7 +42,7 @@ options:
     action:
         description: Specifies the action to perform
         required: true
-        choices: ['user', 'url', 'domain']
+        choices: ['user', 'url', 'domain', 'password']
         type: str
     parameters:
         description:
@@ -57,6 +57,8 @@ options:
           - phone_number
           - username
           - ip
+          - hash_type
+          - hash_prefix
           - url
           - domain
           - start
@@ -65,6 +67,9 @@ options:
 notes:
   - The phone number has a minLength 7, maxLength 15.
   - start and end are dates is the form of "2022-05-15"
+  - Only the first 5 characters of the has_prefix is required, however
+  - the full hash can be provided, it will be truncated to the first 5
+  - The value of hash_type is lowercase.
 
 author:
     - Joel W. King (@joelwking)
@@ -112,6 +117,15 @@ EXAMPLES = r'''
           url: http://113.235.101.11:54384
           provider: crowdstrike
 
+    - name: Breached Password
+      netcraftsmen.pangea.intel:
+        token: '{{ token }}'
+        domain: '{{ domain }}'
+        action: password
+        parameters:
+          hash_type: '{{ "SHA1" | lower }}'
+          hash_prefix: 8f263db9e9e6e7259866281db399e16fac312bbb  # echo -n 'cisco123' | sha1sum
+          provider: spycloud
 '''
 
 RETURN = r'''
@@ -197,6 +211,29 @@ def user_intel(params):
     return dict(data=response.json)
 
 
+def breached_password(params):
+    """ Find out if a password has been exposed in security breaches by 
+        providing a 5 character prefix of the password hash.
+
+    Args:
+        params (dict): module parameters
+    """
+    config = PangeaConfig(domain=params.get("domain"))
+    intel = UserIntel(params.get("token"), config=config, logger_name="intel")
+    if params.get('logger'):
+        logger_set_pangea_config(logger_name=intel.logger.name)
+
+    valid = ('hash_type', 'hash_prefix', 'provider', 'verbose', 'raw')
+    params = strip_invalid(params.get('parameters'), valid)
+    params['hash_prefix'] = params['hash_prefix'][:5]   # First five characters only
+
+    try:
+        response = intel.password_breached(**params)
+    except pe.PangeaAPIException as e:
+        return dict(fail=True, msg=f"Breached Password Error: {e.response.summary} {e.errors}")
+
+    return dict(data=response.json)
+
 def domain_intel(params):
     """ Retrieve reputation for a domain from a provider, including an optional detailed report.
 
@@ -227,7 +264,7 @@ def url_intel(params):
     Args:
         params (dict): module parameters
     """
-    
+
     config = PangeaConfig(domain=params.get("domain"))
     intel = UrlIntel(params.get("token"), config=config, logger_name="intel")
     if params.get('logger'):
@@ -256,6 +293,8 @@ def main():
                 email=dict(type='str', required=False, default=None),
                 username=dict(type='str', required=False, default=None),
                 phone_number=dict(type='str', required=False, default=None),
+                hash_prefix=dict(type='str', required=False, default=None),
+                hash_type=dict(type='str', required=False, choices=['md5', 'sha1', 'sha256']),
                 ip=dict(type='str', required=False, default=None),
                 url=dict(type='str', required=False, default=None),
                 domain=dict(type='str', required=False, default=None),
@@ -265,7 +304,7 @@ def main():
                 verbose=dict(type='bool', required=False, default=False),
                 raw=dict(type='bool', required=False, default=False),  
                 )),
-            action=dict(type='str', required=True, choices=['user', 'ip', 'url', 'domain'])
+            action=dict(type='str', required=True, choices=['user', 'password', 'url', 'domain'])
             ),
         supports_check_mode=False
     )
@@ -276,6 +315,7 @@ def main():
     # Create a case structure to call the appropriate action
     supported_actions = dict(user=user_intel,
                              url=url_intel,
+                             password=breached_password,
                              domain=domain_intel)
 
     # Get the function name associated with the action called by the user

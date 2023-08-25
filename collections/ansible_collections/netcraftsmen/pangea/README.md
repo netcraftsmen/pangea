@@ -14,7 +14,6 @@ ansible-galaxy collection install netcraftsmen.pangea
 
 Determine the `domain` value from the Pangea Cloud [Console](https://console.pangea.cloud/) home page. An example is `aws.us.pangea.cloud`.  Authentication is through the use of Bearer Tokens. Each service can have a unique Bearer Token, or you can create a single token associated with multiple services. The token can be encrypted with `ansible-vault` and stored in a host or group vars file, or set in an environment variable. Manage the project tokens from the `https://console.pangea.cloud/project/tokens` page.
 
-
 ## Plugins
 
 The following plugins are included in the collection:
@@ -25,7 +24,7 @@ The following plugins are included in the collection:
 
 ### pangea.intel
 
-The intel plugin module implements these features of the Pangea service. The `action` parameter specifies the action to perform, "user", "url", "domain".
+The intel plugin module implements these features of the Pangea service. The `action` parameter specifies the action to perform, "user", "url", "domain" and "password".
 
 The `parameter` parameter, specifies a dictionary of key, value pairs, providing one or more parameters for the given action. For example, to provide User IP intel, the parameters could be as shown:
 
@@ -41,9 +40,7 @@ parameters:
 The module will fail, or ignore parameters, that are incorrect or out of context.
 
 #### User Intel
-This module provides User Intel functionality to determine if an email address, username, phone number, or IP address was exposed in a security breach. 
-
->Note: User Intel does not currently implement the Password component.
+This module provides User Intel functionality to determine if an email address, username, phone number, password or IP address was exposed in a security breach.
 
 #### Domain Intel
 

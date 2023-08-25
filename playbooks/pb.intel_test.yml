@@ -80,3 +80,15 @@
           provider: crowdstrike
       register: pangea
       tags: ['url']
+
+    - name: Breached Password
+      netcraftsmen.pangea.intel:
+        token: '{{ token }}'
+        domain: '{{ domain }}'
+        action: password
+        parameters:
+          hash_type: '{{ "SHA1" | lower }}'
+          hash_prefix: 8f263db9e9e6e7259866281db399e16fac312bbb  # echo -n 'cisco123' | sha1sum
+          provider: spycloud
+      register: pangea
+      tags: ['password']

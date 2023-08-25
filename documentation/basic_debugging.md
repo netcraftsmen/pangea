@@ -64,11 +64,11 @@ done
 ### Generate MD5 hash
 
 ```shell
-echo -n 'somestring' | md5sum
+echo -n 'cisco123' | md5sum
+echo -n 'cisco123' | sha1sum
 ```
-hashtype is one of ['MD5', 'SHA1', 'SHA256']  (lowercase)
 
-Only specify the first 5 characters
+The hashtype is one of ['MD5', 'SHA1', 'SHA256']  (lowercase) Only specify the first 5 characters
 
 ```python
 from pangea.services.intel import HashType
