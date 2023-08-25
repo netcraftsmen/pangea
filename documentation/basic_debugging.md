@@ -61,6 +61,22 @@ do
 done
 ```
 
+### Generate MD5 hash
+
+```shell
+echo -n 'somestring' | md5sum
+```
+hashtype is one of ['MD5', 'SHA1', 'SHA256']  (lowercase)
+
+Only specify the first 5 characters
+
+```python
+from pangea.services.intel import HashType
+# only HashType only returns a string
+HashType.MD5
+response = intel.password_breached(hash_prefix="7b3c80"[:5], hash_type='md5', provider="spycloud")
+```
+
 ## Author 
 
 Joel W. King (@joelwking)
