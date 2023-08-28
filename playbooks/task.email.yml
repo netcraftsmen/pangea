@@ -1,0 +1,13 @@
+---
+    - name: Notify by sending email
+      community.general.mail:
+        host: smtp.gmail.com
+        port: 465 
+        username: "{{ lookup('ansible.builtin.env', 'GMAIL_USERNAME') }}"
+        password: "{{ lookup('ansible.builtin.env', 'GMAIL_TOKEN') }}"
+        from: "Pangea <info@example.net"
+        headers: "Reply-To={{ reply_to_email }}|X-MC-AutoHtml='on'"
+        to: '{{ to_email }}'
+        subject: '{{ subject_email }}'
+        body: "\n\n{{ body_email }}\n\n Thank You!"
+      delegate_to: localhost

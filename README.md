@@ -7,7 +7,7 @@ ABOUT THE CHALLENGE: Health & Wealth Hackathon is a great opportunity to build y
 
 ## Ansible Collection
 
-This repository contains an Ansible Collection with a module to interface with Pangea Cloud.
+This repository contains an Ansible Collection `collections/ansible_collections/netcraftsmen/pangea/` including a module `intel.py` to interface with Pangea Cloud. The collection `README.md` documents installation and use.
 
 The `playbooks` directory contains two sample playbooks. Playbook `pb.intel_test.yml` is used to document the test cases. The playbook `pb.breach_user_check.yml` illustrates if a username, email or phone number has been exposed in a security breach. 
 
