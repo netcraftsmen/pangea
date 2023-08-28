@@ -10,6 +10,13 @@ export PANGEA_AUDIT_TOKEN=$PANGEA_TOKEN
 export PANGEA_DOMAIN=aws.us.pangea.cloud
 ```
 
+If you wish to send a demonstration email using gmail, you must provide a Gmail account and app token.
+
+```shell
+export GMAIL_TOKEN=<token>
+export GMAIL_USERNAME=<account>@gmail.com
+```
+
 From your container, you can `source .env/login.sh` to set the variables in your terminal window
 
 ### Ansible Vault Password
