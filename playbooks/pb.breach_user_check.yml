@@ -13,7 +13,8 @@
 #
 #        ansible-playbook pb.breach_user_check.yml -e 'email=bob@example.com' -e 'phone_number=9197079300' -e 'username=bob'
 # 
-
+#          use `--skip-tags sendmail` to avoid sending an email.
+#
 - name: Breached User Check
   connection: local
   hosts: localhost
@@ -91,4 +92,4 @@
           - '{{ playbook_dir }}/files/email.yml'
           - '{{ playbook_dir }}/files/phone.yml'
           - '{{ playbook_dir }}/files/username.yml'
-      tags: ['email']
+      tags: ['sendmail']
