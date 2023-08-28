@@ -20,16 +20,17 @@
   gather_facts: false
 
   vars: 
-    token: "{{ lookup('ansible.builtin.env', 'PANGEA_TOKEN') }}"
-    domain: "{{ lookup('ansible.builtin.env', 'PANGEA_DOMAIN') }}"
-
-    pangea_anchor: &pangea_opts
-      domain: '{{ domain }}'
-      token: '{{ token }}'
-
+    # Subject of the investigation
     email: "bob@example.net"
     phone_number: 919-707-9300
     username: whitehead
+
+    # Email (results) receipient
+    receipient: jking@blueally.com
+    
+    pangea_anchor: &pangea_opts
+      domain: "{{ lookup('ansible.builtin.env', 'PANGEA_DOMAIN') }}"
+      token: "{{ lookup('ansible.builtin.env', 'PANGEA_TOKEN') }}"
 
   tasks:
     - name: User Intel email
@@ -77,3 +78,17 @@
         - '{ "data": {{ pangea_phone }}, "fname": "phone"}'
         - '{ "data": {{ pangea_username }}, "fname": "username"}'
         - '{ "data": {{ pangea_email }}, "fname": "email"}'
+
+    - name: Send email
+      ansible.builtin.include_tasks:
+        file: '{{ playbook_dir }}/task.email.yml'
+      vars:
+        to_email: '{{ receipient }}'
+        reply_to_email:  no_reply@example.net
+        subject_email: Automated User Breach Intelligence  
+        body_email: 'Investigation results, if email address ({{ email }}), username ({{ username }}), phone number ({{ phone_number }}) were exposed in a security breach.'
+        attachments_email: 
+          - '{{ playbook_dir }}/files/email.yml'
+          - '{{ playbook_dir }}/files/phone.yml'
+          - '{{ playbook_dir }}/files/username.yml'
+      tags: ['email']
