@@ -5,10 +5,10 @@
         port: 465 
         username: "{{ lookup('ansible.builtin.env', 'GMAIL_USERNAME') }}"
         password: "{{ lookup('ansible.builtin.env', 'GMAIL_TOKEN') }}"
-        from: "Pangea User Intelligence <info@example.net"
+        from: "Pangea User Intelligence <noresponse@example.net>"
         headers: "Reply-To={{ reply_to_email }}|X-MC-AutoHtml='on'"
         to: '{{ to_email }}'
         subject: '{{ subject_email }}'
-        body: "\n\n{{ body_email }}\n\n Thank You!"
+        body: "\n\n{{ body_email }}\n\n Contact your department security information officer with any questions."
         attach: '{{ attachments_email }}'  # a list element
       delegate_to: localhost

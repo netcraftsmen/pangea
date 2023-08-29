@@ -85,9 +85,9 @@
         file: '{{ playbook_dir }}/task.email.yml'
       vars:
         to_email: '{{ receipient }}'
-        reply_to_email:  no_reply@example.net
+        reply_to_email:  noresponse@example.net
         subject_email: Automated User Breach Intelligence  
-        body_email: 'Investigation results, if email address ({{ email }}), username ({{ username }}), phone number ({{ phone_number }}) were exposed in a security breach.'
+        body_email: 'Investigation results: email address ({{ email }}), username ({{ username }}), phone number ({{ phone_number }}) were exposed in a security breach.'
         attachments_email: 
           - '{{ playbook_dir }}/files/email.yml'
           - '{{ playbook_dir }}/files/phone.yml'
