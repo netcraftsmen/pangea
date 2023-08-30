@@ -49,10 +49,11 @@ We are excited to show this capability to our clients.
 
 ## Video demo link
 
-<!--- youtube, vimeo --->
+A demo video of the project. <https://vimeo.com/manage/videos/859471646>
 
 ## Project Media
 
+Refer to this repository or the DevPost site: <https://healthandwealth.devpost.com/>
 <!--- jpg, png or gif format --->
 
 ## Ansible Collection
