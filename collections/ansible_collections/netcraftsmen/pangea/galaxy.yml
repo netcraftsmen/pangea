@@ -27,7 +27,7 @@ description: Pangea Cloud User Intel module to determine if an email address, us
 # accepts L(SPDX,https://spdx.org/licenses/) licenses. This key is mutually exclusive with 'license_file'
 license:
 - GPL-2.0-or-later
-- Apache License Version 2.0
+- Apache-2.0
 
 # The path to the license file for the collection. This path is relative to the root of the collection. This key is
 # mutually exclusive with 'license'
