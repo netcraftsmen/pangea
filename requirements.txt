@@ -8,7 +8,7 @@ requests
 flake8
 # -----------------------------------------------------------
 #
-# For Ansible and YAML file linting (used in CI/CD demo)
+# For Ansible and YAML file linting
 #
 yamllint
 ansible-lint
