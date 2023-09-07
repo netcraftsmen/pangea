@@ -1,6 +1,16 @@
 # pangea
 Pangea has a comprehensive security platform that you can leverage with simple API calls for authentication, audit logging, secrets management, sensitive data removal, and intelligence services.
 
+## Ansible Collection
+
+This repository contains an Ansible Collection `collections/ansible_collections/netcraftsmen/pangea/` including a module `intel.py` to interface with Pangea Cloud. The collection `README.md` documents installation and use.
+
+The `playbooks` directory contains two sample playbooks. Playbook `pb.intel_test.yml` is used to document the test cases. The playbook `pb.breach_user_check.yml` illustrates if a username, email or phone number has been exposed in a security breach. 
+
+Refer to <https://galaxy.ansible.com/netcraftsmen/pangea>.
+
+The motivation for developing this collection was to demonstrate a use case for the Pangea Securathon, but it has application for any Ansible automation where User, Domain or URL Intel adds value to the security posture of the infrastructure.
+
 ## Pangea Securathon
 
 ABOUT THE CHALLENGE: Health & Wealth Hackathon is a great opportunity to build your security skills using Pangea APIs for more details see <https://healthandwealth.devpost.com/>. The deadline is 18 September 2023.
@@ -41,7 +51,7 @@ Enhancing the security posture of a client by offering an additional value-add a
 
 ### What we learned
 
-The ability to query huge volumns of breach data with efficient API calls was amazing. 
+The ability to query huge volumns of breach data with efficient API calls is amazing. 
 
 ### What's next for the project
 
@@ -55,12 +65,6 @@ A demo video of the project. <https://vimeo.com/manage/videos/859471646>
 
 Refer to this repository or the DevPost site: <https://healthandwealth.devpost.com/>
 <!--- jpg, png or gif format --->
-
-## Ansible Collection
-
-This repository contains an Ansible Collection `collections/ansible_collections/netcraftsmen/pangea/` including a module `intel.py` to interface with Pangea Cloud. The collection `README.md` documents installation and use.
-
-The `playbooks` directory contains two sample playbooks. Playbook `pb.intel_test.yml` is used to document the test cases. The playbook `pb.breach_user_check.yml` illustrates if a username, email or phone number has been exposed in a security breach. 
 
 ## Author
 

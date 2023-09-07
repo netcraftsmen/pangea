@@ -188,7 +188,7 @@ def strip_invalid(parameters, valid):
 
 
 def user_intel(params):
-    """ The User Intel service allows you to check a large repository of breach data to see if a user's 
+    """ The User Intel service allows you to check a large repository of breach data to see if a user's
         Personally Identifiable Data (PII) or credentials have been compromised.
     Args:
         params (dict): module parameters
@@ -212,7 +212,7 @@ def user_intel(params):
 
 
 def breached_password(params):
-    """ Find out if a password has been exposed in security breaches by 
+    """ Find out if a password has been exposed in security breaches by
         providing a 5 character prefix of the password hash.
 
     Args:
@@ -233,6 +233,7 @@ def breached_password(params):
         return dict(fail=True, msg=f"Breached Password Error: {e.response.summary} {e.errors}")
 
     return dict(data=response.json)
+
 
 def domain_intel(params):
     """ Retrieve reputation for a domain from a provider, including an optional detailed report.
@@ -258,7 +259,7 @@ def domain_intel(params):
 
 
 def url_intel(params):
-    """ The URL Intel service allows you to retrieve intelligence about known URLs, 
+    """ The URL Intel service allows you to retrieve intelligence about known URLs,
         giving you insight into the reputation of a URL.
 
     Args:
@@ -302,7 +303,7 @@ def main():
                 start=dict(type='str', required=False),
                 end=dict(type='str', required=False),
                 verbose=dict(type='bool', required=False, default=False),
-                raw=dict(type='bool', required=False, default=False),  
+                raw=dict(type='bool', required=False, default=False),
                 )),
             action=dict(type='str', required=True, choices=['user', 'password', 'url', 'domain'])
             ),

@@ -1,4 +1,4 @@
-# Ansible Collection - blueally.pangea aka, netcraftsmen.pangea
+# Ansible Collection - netcraftsmen.pangea
 
 Documentation for the collection.
 
@@ -40,6 +40,7 @@ parameters:
 The module will fail, or ignore parameters, that are incorrect or out of context.
 
 #### User Intel
+
 This module provides User Intel functionality to determine if an email address, username, phone number, password or IP address was exposed in a security breach.
 
 #### Domain Intel
