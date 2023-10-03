@@ -65,11 +65,11 @@ options:
           - end
 
 notes:
-  - The phone number has a minLength 7, maxLength 15.
-  - start and end are dates is the form of "2022-05-15"
-  - Only the first 5 characters of the has_prefix is required, however
-  - the full hash can be provided, it will be truncated to the first 5
-  - The value of hash_type is lowercase.
+  - The phone number has a minLength 7, maxLength 15. Including dashes may yield different results.
+  - Start and end are dates are in the form of "2022-05-15"
+  - Only the first 5 characters of the has_prefix is sent to the API, however
+  - the full hash can be provided, it will be truncated to the first 5 characters.
+  - The value of hash_type is either 'sha1' or 'sha256' and in lowercase.
 
 author:
     - Joel W. King (@joelwking)
@@ -295,7 +295,7 @@ def main():
                 username=dict(type='str', required=False, default=None),
                 phone_number=dict(type='str', required=False, default=None),
                 hash_prefix=dict(type='str', required=False, default=None),
-                hash_type=dict(type='str', required=False, choices=['md5', 'sha1', 'sha256']),
+                hash_type=dict(type='str', required=False, choices=['sha1', 'sha256']),
                 ip=dict(type='str', required=False, default=None),
                 url=dict(type='str', required=False, default=None),
                 domain=dict(type='str', required=False, default=None),
